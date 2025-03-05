@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký nhận thông báo Zalo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h2 class="text-2xl font-bold text-center mb-6">Đăng ký nhận thông báo</h2>
+        <form id="notificationForm" class="space-y-4">
+            <div>
+                <label class="block text-gray-700 font-medium">Số điện thoại Zalo</label>
+                <input type="text" id="phone" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300" required>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-medium">Thời điểm nhận thông báo</label>
+                <input type="time" id="notifyTime" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300" required>
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600">Đăng ký</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("notificationForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+    
+            const phone = document.getElementById("phone").value;
+            let notifyTime = document.getElementById("notifyTime").value;
+    
+            // Chuyển từ định dạng 24h sang 12h AM/PM
+            let [hour, minute] = notifyTime.split(":").map(Number);
+            let period = hour >= 12 ? "PM" : "AM";
+            hour = hour % 12 || 12; // Chuyển 00:00 thành 12 AM
+            notifyTime = `${hour}:${minute.toString().padStart(2, "0")} ${period}`;
+    
+            const response = await fetch("http://localhost:3000/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ phone, notifyTime })
+            });
+    
+            const result = await response.json();
+            alert(result.message);
+        });
+    </script>
+    
+</body>
+</html>
